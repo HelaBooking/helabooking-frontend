@@ -7,7 +7,16 @@ interface EventCardProps {
   event: Event;
 }
 
-const formatDate = (dateArray: number[]): string => {
+const formatDate = (dateArray: number[] | string): string => {
+  if (typeof dateArray === 'string') {
+    return new Date(dateArray).toLocaleString('en-US', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+    });
+  }
   if (!dateArray || dateArray.length < 5) return "Date not available";
   const [year, month, day, hour, minute] = dateArray;
   const date = new Date(year, month - 1, day, hour, minute);
@@ -31,7 +40,21 @@ const EventCard: React.FC<EventCardProps> = ({ event }) => {
         />
         <div className="p-6">
           <h3 className="text-xl font-bold text-neutral-800 mb-2 truncate">{event.name}</h3>
-          <p className="text-gray-600 mb-4">{formatDate(event.eventDate)}</p>
+          {event.description && (
+            <p className="text-sm text-gray-600 mb-2 line-clamp-2">{event.description}</p>
+          )}
+          <p className="text-gray-600 mb-2">{formatDate(event.eventDate)}</p>
+          
+          {event.categories && (
+            <div className="mb-3 flex flex-wrap gap-1">
+              {event.categories.split(',').slice(0, 3).map((category, idx) => (
+                <span key={idx} className="px-2 py-1 bg-blue-100 text-blue-800 text-xs rounded-full">
+                  {category.trim()}
+                </span>
+              ))}
+            </div>
+          )}
+          
           <div className="flex justify-between items-center text-sm">
             <span className="text-gray-500 flex items-center">
               <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1" viewBox="0 0 20 20" fill="currentColor">
@@ -43,6 +66,21 @@ const EventCard: React.FC<EventCardProps> = ({ event }) => {
               {event.availableSeats > 0 ? `${event.availableSeats} seats left` : 'Sold Out'}
             </span>
           </div>
+          
+          {(event.isRecurring || event.isMultiSession) && (
+            <div className="mt-2 flex gap-2">
+              {event.isRecurring && (
+                <span className="text-xs px-2 py-1 bg-purple-100 text-purple-800 rounded">
+                  Recurring
+                </span>
+              )}
+              {event.isMultiSession && (
+                <span className="text-xs px-2 py-1 bg-orange-100 text-orange-800 rounded">
+                  Multi-Session
+                </span>
+              )}
+            </div>
+          )}
         </div>
       </div>
     </Link>

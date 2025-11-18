@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect } from 'react';
-import { getEvents } from '../services/api';
+import { getPublishedEvents } from '../services/api';
 import type { Event } from '../types';
 import EventCard from '../components/EventCard';
 import LoadingSpinner from '../components/LoadingSpinner';
@@ -14,7 +14,7 @@ const HomePage: React.FC = () => {
     const fetchEvents = async () => {
       try {
         setLoading(true);
-        const data = await getEvents();
+        const data = await getPublishedEvents();
         setEvents(data);
       } catch (err) {
         setError('Failed to fetch events. Please try again later.');

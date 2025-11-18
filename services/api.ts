@@ -1,5 +1,5 @@
-import { USER_API_BASE_URL, EVENT_API_BASE_URL, BOOKING_API_BASE_URL } from '../constants';
-import type { User, Event, Booking } from '../types';
+import { USER_API_BASE_URL, EVENT_API_BASE_URL, BOOKING_API_BASE_URL, TICKETING_API_BASE_URL } from '../constants';
+import type { User, Event, Booking, Ticket, UserRole } from '../types';
 
 const getAuthToken = () => {
     try {
@@ -79,19 +79,28 @@ const request = async <T,>(url: string, options: RequestInit = {}): Promise<T> =
 // User API
 export const registerUser = (data: Omit<User, 'id'> & { password: string }) => request(`${USER_API_BASE_URL}/users/register`, { method: 'POST', body: JSON.stringify(data) });
 export const loginUser = (data: { username: string, password: string }) => request(`${USER_API_BASE_URL}/users/login`, { method: 'POST', body: JSON.stringify(data) });
+export const getUserProfile = (userId: number) => request<User>(`${USER_API_BASE_URL}/users/${userId}/profile`);
+export const updateUserRole = (userId: number, role: UserRole) => request<User>(`${USER_API_BASE_URL}/users/${userId}/role`, { method: 'PUT', body: JSON.stringify({ role }) });
 
 // Event API
 // Fix: Correctly type `eventDate` as `string` for creating events by omitting it from the base `Event` type first.
-export const createEvent = (data: Omit<Event, 'id' | 'availableSeats' | 'eventDate'> & { eventDate: string }) => request<Event>(`${EVENT_API_BASE_URL}/events`, { method: 'POST', body: JSON.stringify(data) });
+export const createEvent = (data: Omit<Event, 'id' | 'availableSeats' | 'eventDate' | 'endDate'> & { eventDate: string; endDate?: string }) => request<Event>(`${EVENT_API_BASE_URL}/events`, { method: 'POST', body: JSON.stringify(data) });
 export const getEvents = () => request<Event[]>(`${EVENT_API_BASE_URL}/events`);
+export const getPublishedEvents = () => request<Event[]>(`${EVENT_API_BASE_URL}/events/published`);
 export const getEventById = (id: string) => request<Event>(`${EVENT_API_BASE_URL}/events/${id}`);
 // Fix: Correctly type `eventDate` as `string` for updating events by omitting it from the base `Event` type first.
-export const updateEvent = (id: string, data: Partial<Omit<Event, 'id' | 'availableSeats' | 'eventDate'> & { eventDate: string }>) => request<Event>(`${EVENT_API_BASE_URL}/events/${id}`, { method: 'PUT', body: JSON.stringify(data) });
+export const updateEvent = (id: string, data: Partial<Omit<Event, 'id' | 'availableSeats' | 'eventDate' | 'endDate'> & { eventDate: string; endDate?: string }>) => request<Event>(`${EVENT_API_BASE_URL}/events/${id}`, { method: 'PUT', body: JSON.stringify(data) });
+export const publishEvent = (id: string) => request<Event>(`${EVENT_API_BASE_URL}/events/${id}/publish`, { method: 'POST' });
 export const reserveSeats = (id: string, seats: number) => request<boolean>(`${EVENT_API_BASE_URL}/events/${id}/reserve?seats=${seats}`, { method: 'POST' });
 export const deleteEvent = (id: string) => request<void>(`${EVENT_API_BASE_URL}/events/${id}`, { method: 'DELETE' });
 
 // Booking API
-export const createBooking = (data: Omit<Booking, 'id' | 'status' | 'createdAt'>) => request<Booking>(`${BOOKING_API_BASE_URL}/bookings`, { method: 'POST', body: JSON.stringify(data) });
+export const createBooking = (data: Omit<Booking, 'id' | 'status' | 'createdAt' | 'totalPrice'>) => request<Booking>(`${BOOKING_API_BASE_URL}/bookings`, { method: 'POST', body: JSON.stringify(data) });
 export const getBookings = () => request<Booking[]>(`${BOOKING_API_BASE_URL}/bookings`);
 export const getBookingById = (id: string) => request<Booking>(`${BOOKING_API_BASE_URL}/bookings/${id}`);
 export const getBookingsByUserId = (userId: number) => request<Booking[]>(`${BOOKING_API_BASE_URL}/bookings/user/${userId}`);
+
+// Ticketing API
+export const getTicketsByBooking = (bookingId: number) => request<Ticket[]>(`${TICKETING_API_BASE_URL}/tickets/booking/${bookingId}`);
+export const getTicketsByUser = (userId: number) => request<Ticket[]>(`${TICKETING_API_BASE_URL}/tickets/user/${userId}`);
+export const getTicketByNumber = (ticketNumber: string) => request<Ticket>(`${TICKETING_API_BASE_URL}/tickets/${ticketNumber}`);

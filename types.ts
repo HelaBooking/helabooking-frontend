@@ -1,8 +1,15 @@
+export type UserRole = 'USER' | 'AUDITOR' | 'ADMIN';
+export type EventStatus = 'DRAFT' | 'PUBLISHED' | 'CANCELLED' | 'COMPLETED';
+export type RecurrencePattern = 'DAILY' | 'WEEKLY' | 'MONTHLY' | null;
+export type TicketType = 'FREE' | 'PAID' | 'VIP' | 'GROUP';
+export type BookingStatus = 'CONFIRMED' | 'CANCELLED';
 
 export interface User {
   id: number;
   username: string;
   email: string;
+  role?: UserRole;
+  active?: boolean;
 }
 
 export interface AuthUser extends User {
@@ -12,10 +19,19 @@ export interface AuthUser extends User {
 export interface Event {
   id: number;
   name: string;
+  description?: string;
   location: string;
-  eventDate: number[];
+  venue?: string;
+  agenda?: string;
+  categories?: string;
+  eventDate: number[] | string;
+  endDate?: number[] | string;
   capacity: number;
   availableSeats: number;
+  status?: EventStatus;
+  isRecurring?: boolean;
+  recurrencePattern?: RecurrencePattern;
+  isMultiSession?: boolean;
 }
 
 export interface Booking {
@@ -23,10 +39,27 @@ export interface Booking {
   userId: number;
   eventId: number;
   numberOfTickets: number;
-  status: 'CONFIRMED' | 'CANCELLED';
+  ticketType?: TicketType;
+  pricePerTicket?: number;
+  totalPrice?: number;
+  status: BookingStatus;
   createdAt: number[];
 }
 
 export interface EnrichedBooking extends Booking {
   event?: Event;
+}
+
+export interface Ticket {
+  id: number;
+  ticketNumber: string;
+  bookingId: number;
+  userId: number;
+  eventId: number;
+  ticketType: TicketType;
+  price: number;
+  qrCode?: string;
+  barcode?: string;
+  isUsed?: boolean;
+  usedAt?: number[];
 }
