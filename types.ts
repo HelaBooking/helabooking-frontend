@@ -63,3 +63,11 @@ export interface Ticket {
   isUsed?: boolean;
   usedAt?: number[];
 }
+
+declare global {
+  interface Window {
+    _env_?: {
+      [key: string]: string;
+    };
+  }
+}
