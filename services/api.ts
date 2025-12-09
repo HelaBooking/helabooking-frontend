@@ -13,19 +13,19 @@ const getAuthToken = () => {
     return null;
 };
 
-const request = async <T,>(url: string, options: RequestInit = {}): Promise<T> => {
+const request = async <T,>(url: string, options: RequestInit = {}, skipAuth = false): Promise<T> => {
     const headers = new Headers(options.headers);
 
-    // Set standard headers for JSON API communication.
     headers.set('Accept', 'application/json');
 
-    // NOTE: The Authorization header has been removed.
-    // The working curl examples provided do not use authentication, and sending this
-    // header from a browser triggers a CORS preflight request (OPTIONS).
-    // If the backend is not configured to handle this preflight request correctly,
-    // the browser will block the API call, resulting in a "Failed to fetch" error.
-    // Removing this header makes the requests "simple" and less likely to be blocked by CORS.
-    
+    // Attach bearer token to authenticated requests.
+    if (!skipAuth) {
+        const token = getAuthToken();
+        if (token) {
+            headers.set('Authorization', `Bearer ${token}`);
+        }
+    }
+
     // Only set Content-Type for requests with a body.
     if (options.body) {
         headers.set('Content-Type', 'application/json');
@@ -77,8 +77,8 @@ const request = async <T,>(url: string, options: RequestInit = {}): Promise<T> =
 };
 
 // User API
-export const registerUser = (data: Omit<User, 'id'> & { password: string }) => request(`${USER_API_BASE_URL}/users/register`, { method: 'POST', body: JSON.stringify(data) });
-export const loginUser = (data: { username: string, password: string }) => request(`${USER_API_BASE_URL}/users/login`, { method: 'POST', body: JSON.stringify(data) });
+export const registerUser = (data: Omit<User, 'id'> & { password: string }) => request(`${USER_API_BASE_URL}/users/register`, { method: 'POST', body: JSON.stringify(data) }, true);
+export const loginUser = (data: { username: string, password: string }) => request(`${USER_API_BASE_URL}/users/login`, { method: 'POST', body: JSON.stringify(data) }, true);
 export const getUserProfile = (userId: number) => request<User>(`${USER_API_BASE_URL}/users/${userId}/profile`);
 export const updateUserRole = (userId: number, role: UserRole) => request<User>(`${USER_API_BASE_URL}/users/${userId}/role`, { method: 'PUT', body: JSON.stringify({ role }) });
 

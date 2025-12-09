@@ -1,10 +1,12 @@
 
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Navigate, useNavigate } from 'react-router-dom';
+import { useAuth } from '../hooks/useAuth';
 import { createEvent } from '../services/api';
 import type { RecurrencePattern } from '../types';
 
 const CreateEventPage: React.FC = () => {
+  const { user } = useAuth();
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
   const [location, setLocation] = useState('');
@@ -20,6 +22,10 @@ const CreateEventPage: React.FC = () => {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+
+  if (!user || user.role !== 'ADMIN') {
+    return <Navigate to="/" />;
+  }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

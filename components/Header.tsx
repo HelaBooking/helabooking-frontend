@@ -30,9 +30,16 @@ const Header: React.FC = () => {
             </NavLink>
             {user && (
               <>
-                 <NavLink to="/create-event" className={({ isActive }) => `${linkStyle} ${isActive ? activeLinkStyle : ''}`}>
-                  Create Event
-                </NavLink>
+                {user.role === 'ADMIN' && (
+                  <>
+                    <NavLink to="/create-event" className={({ isActive }) => `${linkStyle} ${isActive ? activeLinkStyle : ''}`}>
+                      Create Event
+                    </NavLink>
+                    <NavLink to="/manage-events" className={({ isActive }) => `${linkStyle} ${isActive ? activeLinkStyle : ''}`}>
+                      Manage Events
+                    </NavLink>
+                  </>
+                )}
                 <NavLink to="/my-bookings" className={({ isActive }) => `${linkStyle} ${isActive ? activeLinkStyle : ''}`}>
                   My Bookings
                 </NavLink>

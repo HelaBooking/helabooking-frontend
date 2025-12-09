@@ -9,6 +9,7 @@ import RegisterPage from './pages/RegisterPage';
 import EventDetailPage from './pages/EventDetailPage';
 import MyBookingsPage from './pages/MyBookingsPage';
 import CreateEventPage from './pages/CreateEventPage';
+import ManageEventsPage from './pages/ManageEventsPage';
 
 const App: React.FC = () => {
   return (
@@ -33,8 +34,16 @@ const App: React.FC = () => {
               <Route
                 path="/create-event"
                 element={
-                  <ProtectedRoute>
+                  <ProtectedRoute requireAdmin>
                     <CreateEventPage />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/manage-events"
+                element={
+                  <ProtectedRoute requireAdmin>
+                    <ManageEventsPage />
                   </ProtectedRoute>
                 }
               />
@@ -46,10 +55,13 @@ const App: React.FC = () => {
   );
 };
 
-const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+const ProtectedRoute: React.FC<{ children: React.ReactNode; requireAdmin?: boolean }> = ({ children, requireAdmin }) => {
   const { user } = useAuth();
   if (!user) {
     return <Navigate to="/login" />;
+  }
+  if (requireAdmin && user.role !== 'ADMIN') {
+    return <Navigate to="/" />;
   }
   return <>{children}</>;
 };

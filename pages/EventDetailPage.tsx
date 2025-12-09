@@ -1,7 +1,7 @@
 
 import React, { useState, useEffect, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { getEventById, createBooking, deleteEvent } from '../services/api';
+import { getEventById, createBooking, deleteEvent, publishEvent } from '../services/api';
 import type { Event, TicketType } from '../types';
 import { useAuth } from '../hooks/useAuth';
 import LoadingSpinner from '../components/LoadingSpinner';
@@ -35,6 +35,7 @@ const EventDetailPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { user } = useAuth();
+  const isAdmin = user?.role === 'ADMIN';
 
   const [event, setEvent] = useState<Event | null>(null);
   const [loading, setLoading] = useState(true);
@@ -46,6 +47,7 @@ const EventDetailPage: React.FC = () => {
   const [ticketType, setTicketType] = useState<TicketType>('PAID');
   const [pricePerTicket, setPricePerTicket] = useState(0);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isPublishing, setIsPublishing] = useState(false);
 
   const fetchEvent = useCallback(async () => {
     if (!id) return;
@@ -109,6 +111,20 @@ const EventDetailPage: React.FC = () => {
       }
   };
 
+  const handlePublish = async () => {
+    if (!id) return;
+    setIsPublishing(true);
+    try {
+      await publishEvent(id);
+      await fetchEvent();
+    } catch (err) {
+      setError('Failed to publish event.');
+      console.error(err);
+    } finally {
+      setIsPublishing(false);
+    }
+  };
+
   if (loading) return <LoadingSpinner />;
   if (error) return <p className="text-center text-red-500 mt-8">{error}</p>;
   if (!event) return <p className="text-center text-gray-500 mt-8">Event not found.</p>;
@@ -123,7 +139,32 @@ const EventDetailPage: React.FC = () => {
         className="w-full h-64 object-cover"
       />
       <div className="p-8">
-        <h1 className="text-4xl font-extrabold text-neutral-800 mb-2">{event.name}</h1>
+        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-2">
+          <h1 className="text-4xl font-extrabold text-neutral-800">{event.name}</h1>
+          <div className="flex flex-wrap gap-2 items-center">
+            <span className={`px-3 py-1 rounded-full text-sm font-semibold ${
+              event.status === 'PUBLISHED'
+                ? 'bg-green-100 text-green-800'
+                : event.status === 'DRAFT'
+                  ? 'bg-yellow-100 text-yellow-800'
+                  : 'bg-gray-100 text-gray-800'
+            }`}>
+              {event.status || 'UNKNOWN'}
+            </span>
+            {isAdmin && event.status !== 'PUBLISHED' && (
+              <button
+                onClick={handlePublish}
+                disabled={isPublishing}
+                className="bg-primary hover:bg-primary-dark text-white font-bold px-3 py-2 rounded-md text-sm disabled:opacity-60"
+              >
+                {isPublishing ? 'Publishing...' : 'Publish'}
+              </button>
+            )}
+            {!isAdmin && event.status !== 'PUBLISHED' && (
+              <span className="text-xs text-red-600 font-semibold">This event is not published yet.</span>
+            )}
+          </div>
+        </div>
         <p className="text-lg text-gray-600 mb-2">{formatDate(event.eventDate)}</p>
         {event.endDate && (
           <p className="text-sm text-gray-500 mb-4">Ends: {formatDate(event.endDate)}</p>
@@ -252,7 +293,7 @@ const EventDetailPage: React.FC = () => {
             </div>
           )}
         </div>
-        {user && (
+        {isAdmin && (
           <div className="mt-8 pt-4 border-t">
               <button onClick={() => setIsModalOpen(true)} className="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-lg transition-colors duration-300">
                   Delete Event
