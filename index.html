@@ -2,26 +2,127 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Event Horizon Booking</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes" />
+    <meta name="description" content="Discover and book amazing events with HelaBooking - Your gateway to unforgettable experiences" />
+    <meta name="theme-color" content="#6366F1" />
+    <link rel="icon" type="image/svg+xml" href="/logo.svg" />
+    <link rel="apple-touch-icon" href="/logo.svg" />
+    <title>HelaBooking - Event Booking Platform</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
       tailwind.config = {
+        darkMode: 'class',
         theme: {
           extend: {
             colors: {
               primary: "#6366F1",
+              "primary-light": "#818CF8",
               "primary-dark": "#4F46E5",
               secondary: "#10B981",
-              "neutral-800": "#1F2937",
-              "neutral-700": "#374151",
-              "neutral-200": "#E5E7EB",
+              accent: "#F59E0B",
+              "neutral-50": "#F9FAFB",
               "neutral-100": "#F3F4F6",
+              "neutral-200": "#E5E7EB",
+              "neutral-300": "#D1D5DB",
+              "neutral-400": "#9CA3AF",
+              "neutral-500": "#6B7280",
+              "neutral-600": "#4B5563",
+              "neutral-700": "#374151",
+              "neutral-800": "#1F2937",
+              "neutral-900": "#111827",
+              "neutral-950": "#0F172A",
+            },
+            backgroundImage: {
+              "gradient-radial": "radial-gradient(var(--tw-gradient-stops))",
+              "gradient-conic": "conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))",
+            },
+            boxShadow: {
+              "elevation-1": "0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24)",
+              "elevation-2": "0 3px 6px rgba(0, 0, 0, 0.15), 0 2px 4px rgba(0, 0, 0, 0.12)",
+              "elevation-3": "0 10px 20px rgba(0, 0, 0, 0.15), 0 3px 6px rgba(0, 0, 0, 0.10)",
+            },
+            fontSize: {
+              xs: ["12px", { lineHeight: "16px" }],
+              sm: ["14px", { lineHeight: "20px" }],
+              base: ["16px", { lineHeight: "24px" }],
+              lg: ["18px", { lineHeight: "28px" }],
+              xl: ["20px", { lineHeight: "28px" }],
+              "2xl": ["24px", { lineHeight: "32px" }],
+              "3xl": ["30px", { lineHeight: "36px" }],
+              "4xl": ["36px", { lineHeight: "40px" }],
+            },
+            animation: {
+              'fade-in': 'fadeIn 0.5s ease-in-out',
+              'slide-up': 'slideUp 0.5s ease-out',
+              'slide-down': 'slideDown 0.3s ease-out',
+              'scale-in': 'scaleIn 0.3s ease-out',
+            },
+            keyframes: {
+              fadeIn: {
+                '0%': { opacity: '0' },
+                '100%': { opacity: '1' },
+              },
+              slideUp: {
+                '0%': { transform: 'translateY(20px)', opacity: '0' },
+                '100%': { transform: 'translateY(0)', opacity: '1' },
+              },
+              slideDown: {
+                '0%': { transform: 'translateY(-10px)', opacity: '0' },
+                '100%': { transform: 'translateY(0)', opacity: '1' },
+              },
+              scaleIn: {
+                '0%': { transform: 'scale(0.95)', opacity: '0' },
+                '100%': { transform: 'scale(1)', opacity: '1' },
+              },
             },
           },
         },
       };
     </script>
+    <style>
+      /* Smooth scrolling */
+      html {
+        scroll-behavior: smooth;
+      }
+      
+      /* Custom scrollbar */
+      ::-webkit-scrollbar {
+        width: 10px;
+        height: 10px;
+      }
+      
+      ::-webkit-scrollbar-track {
+        background: #f1f1f1;
+      }
+      
+      ::-webkit-scrollbar-thumb {
+        background: #6366F1;
+        border-radius: 5px;
+      }
+      
+      ::-webkit-scrollbar-thumb:hover {
+        background: #4F46E5;
+      }
+      
+      /* Responsive text selection */
+      ::selection {
+        background-color: #6366F1;
+        color: white;
+      }
+      
+      /* Prevent horizontal scroll on mobile */
+      body {
+        overflow-x: hidden;
+      }
+      
+      /* Touch-friendly tap targets */
+      @media (max-width: 768px) {
+        button, a {
+          min-height: 44px;
+          min-width: 44px;
+        }
+      }
+    </style>
     <script src="/env-config.js"></script>
     <script type="importmap">
       {
