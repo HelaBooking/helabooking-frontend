@@ -181,6 +181,30 @@ a {
   aspect-ratio: 16 / 9;
 }
 
+/* Barcode and QR responsive wrappers */
+.barcode-wrapper {
+  max-width: 320px;
+  width: 100%;
+}
+.barcode-wrapper svg {
+  width: 100% !important;
+  height: auto !important;
+  display: block;
+}
+
+/* Small QR wrapper to center and scale QR svg */
+.qr-wrapper {
+  width: 10rem; /* 40 */
+  height: 10rem; /* 40 */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.qr-wrapper svg {
+  width: 100% !important;
+  height: 100% !important;
+}
+
 .aspect-4-3 {
   aspect-ratio: 4 / 3;
 }

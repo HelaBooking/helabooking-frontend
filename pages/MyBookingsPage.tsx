@@ -9,6 +9,7 @@ import LoadingSpinner from '../components/LoadingSpinner';
 import { Link } from 'react-router-dom';
 import Modal from '../components/Modal';
 import QRCode from 'react-qr-code';
+import Barcode from 'react-barcode';
 
 const MyBookingsPage: React.FC = () => {
   const { user } = useAuth();
@@ -206,8 +207,8 @@ const MyBookingsPage: React.FC = () => {
                       {ticket.qrCode.startsWith && ticket.qrCode.startsWith('data:') ? (
                         <img src={ticket.qrCode} alt={`${ticket.ticketNumber} QR`} className="w-40 h-40 object-contain" />
                       ) : (
-                        <div className="p-2 bg-white rounded-md">
-                          <QRCode value={ticket.qrCode} size={128} />
+                        <div className="p-1 bg-white rounded-md overflow-hidden qr-wrapper">
+                          <QRCode value={ticket.qrCode} />
                         </div>
                       )}
                       <p className="text-xs text-neutral-600 dark:text-neutral-400 mt-2 break-all text-center">{ticket.qrCode}</p>
@@ -217,7 +218,17 @@ const MyBookingsPage: React.FC = () => {
                 {ticket.barcode && (
                   <div className="mt-3 pt-3 border-t border-neutral-200 dark:border-neutral-700 text-center">
                     <p className="text-xs font-semibold text-neutral-600 dark:text-neutral-400 mb-2">Barcode</p>
-                    <p className="text-xs text-neutral-600 dark:text-neutral-400 break-all">{ticket.barcode}</p>
+                    <div className="flex flex-col items-center">
+                      {/* If backend returns a data URI image, render it; otherwise render a generated barcode */}
+                      {ticket.barcode.startsWith && ticket.barcode.startsWith('data:') ? (
+                        <img src={ticket.barcode} alt={`${ticket.ticketNumber} barcode`} className="w-full max-w-[320px] h-20 object-contain" />
+                      ) : (
+                        <div className="p-1 bg-white rounded-md overflow-hidden barcode-wrapper w-full max-w-[320px]">
+                          <Barcode value={ticket.barcode} displayValue={false} width={1} height={48} />
+                        </div>
+                      )}
+                      <p className="text-xs text-neutral-600 dark:text-neutral-400 mt-2 break-all">{ticket.barcode}</p>
+                    </div>
                   </div>
                 )}
               </div>
